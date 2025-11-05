@@ -1,18 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getGeminiClient } from '../../utils/geminiClient';
-
-let neonClientPromise = null;
-const getClient = async () => {
-  if (!neonClientPromise) {
-    neonClientPromise = (async () => {
-      const { neon } = await import('@neondatabase/serverless');
-      const connectionString = process.env.DATABASE_URL;
-      if (!connectionString) throw new Error('DATABASE_URL not configured');
-      return neon(connectionString);
-    })();
-  }
-  return await neonClientPromise;
-};
+import { insertPrompt, countPromptsBeforeId } from '../../utils/dbClient';
+import { estimatePromptUseTime } from '../../utils/scheduleUtils';
 
 export async function POST(request) {
   try {
@@ -52,12 +41,12 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: 'The prompt does not comply with the policy and cannot be inserted' }, { status: 400 });
     }
 
-    const sql = await getClient();
-    const result = await sql`INSERT INTO prompt_queue (prompt, create_date)
-                                VALUES (${prompt}, ${new Date()})
-                                RETURNING id`;
+    const id = await insertPrompt(prompt);
+    const previousCount = await countPromptsBeforeId(id);
+    const scheduledAt = estimatePromptUseTime(previousCount);
+    const scheduledDay = new Date(scheduledAt).toDateString();
 
-    return NextResponse.json({ success: true, id: result?.[0].id }, { status: 201 });
+    return NextResponse.json({ success: true, id, scheduledAt, scheduledDay }, { status: 201 });
   } catch (err) {
     console.error('❌ POST /api/prompts error:', err);
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });

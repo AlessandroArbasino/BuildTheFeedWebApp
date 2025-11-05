@@ -9,6 +9,8 @@ export default function Page() {
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState(null)
   const [lastResult, setLastResult] = useState(null) // { ok: boolean, message: string }
+  const [showModal, setShowModal] = useState(false)
+  const [scheduledInfo, setScheduledInfo] = useState({ day: '', at: '' })
   const telegramUrl = process.env.NEXT_PUBLIC_TELEGRAM_COMMUNITY_URL || ''
   const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || ''
   const usagePolicy = process.env.NEXT_PUBLIC_USAGE_POLICY || ''
@@ -56,9 +58,9 @@ export default function Page() {
         throw new Error(msg)
       }
       setPrompt('')
-      const okMsg = `Prompt sent! ID: ${json.id}`
-      setLastResult({ ok: true, message: okMsg })
-      showToast(`Prompt sent! ID: ${json.id}`)
+      setLastResult(null)
+      setScheduledInfo({ day: json.scheduledDay || '', at: json.scheduledAt || '' })
+      setShowModal(true)
     } catch (err) {
       console.error(err)
       showToast(`Error: ${err.message}`)
@@ -89,6 +91,30 @@ export default function Page() {
 
       {toast && (
         <div className="toast">{toast}</div>
+      )}
+
+      {showModal && (
+        <div className="modal-overlay" role="dialog" aria-modal="true">
+          <div className="modal">
+            <div className="modal-header">
+              <div className="modal-brand">
+                <img src="/Logo.png" alt="Build The Feed" width={28} height={28} />
+                <span>Build The Feed</span>
+              </div>
+              <h3 className="modal-title">Your post is scheduled</h3>
+            </div>
+            <div className="modal-body">
+              <div className="modal-kicker">Scheduled</div>
+              <p className="modal-text">We will publish your idea on</p>
+              <p className="modal-date">{scheduledInfo.day}</p>
+              <p className="modal-sub">Exact time: {new Date(scheduledInfo.at).toLocaleString()}</p>
+            </div>
+            <div className="modal-actions">
+              <button className="btn btn--primary" onClick={() => setShowModal(false)}>Great!</button>
+              <button className="btn btn--secondary" onClick={() => setShowModal(false)}>Close</button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Footer with socials and policies */}

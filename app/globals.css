@@ -194,3 +194,121 @@ html, body {
 .mt-4 {
   margin-top: 4px;
 }
+
+/* Fullscreen modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,42,58,0.55);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modal {
+  width: 100%;
+  max-width: 720px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  overflow: hidden;
+  border: 1px solid rgba(15,42,58,0.12);
+}
+
+.modal-header {
+  padding: 20px 24px 0 24px;
+  border-bottom: 1px solid rgba(15,42,58,0.06);
+  background: linear-gradient(180deg, rgba(159,215,243,0.25), rgba(159,215,243,0));
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.modal-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.modal-body {
+  padding: 16px 24px 8px 24px;
+}
+
+.modal-text {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: rgba(15,42,58,0.8);
+}
+
+.modal-kicker {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: linear-gradient(90deg, var(--sun), var(--sky));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+}
+
+.modal-date {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--greenD);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.modal-sub {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: rgba(15,42,58,0.7);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 16px 24px 24px 24px;
+}
+
+.btn--secondary {
+  background: rgba(15,42,58,0.06);
+  color: var(--ink);
+  padding: 12px 20px;
+  box-shadow: none;
+}
+
+/* Responsive enhancements */
+@media (max-width: 768px) {
+  .title { font-size: 28px; }
+  .card { padding: 18px; }
+  .textarea { min-height: 180px; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .modal { max-width: 560px; }
+  .modal-title { font-size: 24px; }
+  .modal-date { font-size: 28px; }
+}
+
+@media (max-width: 480px) {
+  .header { gap: 8px; }
+  .title { font-size: 24px; }
+  .card { padding: 14px; border-radius: 12px; }
+  .btn--primary { width: 100%; }
+  .social-link { width: 100%; justify-content: center; }
+  .policy-links { justify-content: center; }
+  .modal { border-radius: 12px; }
+}
