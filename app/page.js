@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const API_BASE = '' // same origin in Next.js
 
@@ -11,10 +11,21 @@ export default function Page() {
   const [lastResult, setLastResult] = useState(null) // { ok: boolean, message: string }
   const [showModal, setShowModal] = useState(false)
   const [scheduledInfo, setScheduledInfo] = useState({ day: '', at: '' })
+  const [showSplash, setShowSplash] = useState(true)
+  const [entered, setEntered] = useState(false)
   const telegramUrl = process.env.NEXT_PUBLIC_TELEGRAM_COMMUNITY_URL || ''
   const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || ''
   const usagePolicy = process.env.NEXT_PUBLIC_USAGE_POLICY || ''
   const privacyUrl = process.env.NEXT_PUBLIC_PRIVACY_POLICY_URL || ''
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setShowSplash(false)
+      // Small delay to allow repaint before animating content in
+      requestAnimationFrame(() => setEntered(true))
+    }, 1100)
+    return () => clearTimeout(t)
+  }, [])
 
   const privacyLink = (
     <a
@@ -71,6 +82,12 @@ export default function Page() {
 
   return (
     <div className="app">
+      {showSplash && (
+        <div className="splash" aria-hidden>
+          <img src="/Logo.png" alt="Build The Feed" className="splash-logo" width={96} height={96} />
+        </div>
+      )}
+      <div className={`content ${entered ? 'content--in' : ''}`}>
       <header className="header">
         <img src="/Logo.png" alt="Build The Feed logo" width={48} height={48} className="logo" />
         <h1 className="title">Build The Feed</h1>
@@ -151,6 +168,7 @@ export default function Page() {
           {policyLinks}
         </div>
       </footer>
+      </div>
     </div>
   )
 }
