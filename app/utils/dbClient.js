@@ -26,8 +26,8 @@ export const getAllPrompts = async () => {
   return rows;
 };
 
-export const countPromptsBeforeId = async (id) => {
+export const countPrompts = async () => {
   const sql = await getDbClient();
-  const rows = await sql`SELECT COUNT(*)::int AS count FROM prompt_queue WHERE id < ${id}`;
+  const rows = await sql`SELECT COUNT(*)::int AS count FROM prompt_queue`;
   return rows?.[0]?.count ?? 0;
 };

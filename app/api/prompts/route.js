@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getGeminiClient } from '../../utils/geminiClient';
-import { insertPrompt, countPromptsBeforeId } from '../../utils/dbClient';
+import { insertPrompt, countPrompts } from '../../utils/dbClient';
 import { estimatePromptUseTime } from '../../utils/scheduleUtils';
 
 export async function POST(request) {
@@ -24,7 +24,7 @@ export async function POST(request) {
       if (!client) {
         return NextResponse.json({ success: false, error: 'GEMINI_API_KEY/GOOGLE_API_KEY not configured' }, { status: 500 });
       }
-      
+
       const modelName = process.env.DEFAULT_MODEL || 'gemini-2.0-flash';
       const genModel = client.getGenerativeModel({ model: modelName });
 
@@ -42,8 +42,8 @@ export async function POST(request) {
     }
 
     const id = await insertPrompt(prompt);
-    const previousCount = await countPromptsBeforeId(id);
-    const scheduledAt = estimatePromptUseTime(previousCount);
+    const promptCount = await countPrompts();
+    const scheduledAt = estimatePromptUseTime(promptCount);
     const scheduledDay = new Date(scheduledAt).toDateString();
 
     return NextResponse.json({ success: true, id, scheduledAt, scheduledDay }, { status: 201 });
